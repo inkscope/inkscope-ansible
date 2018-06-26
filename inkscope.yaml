@@ -9,30 +9,38 @@
         name: python
         state: latest
 
-    - name: 2 (RedHat) - Installing httpd
+    - name: 2 - Creating inkscope directory for logs
+      file:
+        path: "{{ inkscope_log_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: 0777
+
+    - name: 3 (RedHat) - Installing httpd
       yum:
         name: httpd
         state: latest
       when: ansible_os_family == 'RedHat'
 
-    - name: 2 (Debian) - Installing apache2
+    - name: 3 (Debian) - Installing apache2
       apt:
         name: apache2
         state: latest
       when: ansible_os_family == 'Debian'
 
-    - name: 3 - Installing Apache module proxy_http
+    - name: 4a - Installing Apache module proxy_http
       apache2_module:
         name: proxy_http
         state: present
 
-    - name: 4 (RedHat) - Installing Apache module for wsgi
+    - name: 4b (RedHat) - Installing Apache module for wsgi
       package:
         name: mod_wsgi
         state: latest
       when: ansible_os_family == 'RedHat'
 
-    - name: 4 (Debian) - Installing Apache module for wsgi
+    - name: 4b (Debian) - Installing Apache module for wsgi
       package:
         name: libapache2-mod-wsgi
         state: latest
