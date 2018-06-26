@@ -9,10 +9,18 @@
         name: python
         state: latest
 
-    - name: 1b - Installing python-dev
+    - name: 1b (RedHat) - Installing python-devel
+      package:
+        name: python-devel
+        state: latest
+      when: ansible_os_family == 'RedHat'
+
+    - name: 1b (Debian) - Installing python-dev
       package:
         name: python-dev
         state: latest
+      when: ansible_os_family == 'Debian'
+
 
     - name: 2 - Creating inkscope directory for logs
       file:
