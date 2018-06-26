@@ -1,5 +1,5 @@
 #
-# variables  for the inkscope configuration
+# variables for the inkscope configuration
 #
 
 #
@@ -13,7 +13,7 @@ ceph_rest_api_subfolder: "ceph_rest_api" # don't change
 #
 # Rados gateway configuration
 #
-radosgw_url:    ""      # rados gateway endpoint
+radosgw_url:    ""      # rados gateway endpoint : http(s)://...
 radosgw_admin:  "admin" # pseudo-bucket for the rados gateway admin API
 radosgw_key:    ""      # access key of a S3 user with admin capabilities
 radosgw_secret: ""      # secret key of this S3 user
