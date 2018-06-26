@@ -185,6 +185,8 @@
 
     - name: 13c - Creating keyring for RestApi
       shell: "ceph auth get-or-create client.restapi mds 'allow' osd 'allow *' mon 'allow *' > /etc/ceph/{{ cluster }}.client.restapi.keyring"
+      args:
+        creates: "/etc/ceph/{{ cluster }}.client.restapi.keyring"
 
     - name: 13d - Modifying Ceph configuration file
       blockinfile:
