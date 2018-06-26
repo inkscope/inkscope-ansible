@@ -1,0 +1,4 @@
+#
+# Variables used for the playbook execution
+#
+working_dir: ~/tmp/inkscope

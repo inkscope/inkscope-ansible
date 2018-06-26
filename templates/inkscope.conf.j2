@@ -1,0 +1,51 @@
+{
+    "ceph_conf": "{{ ceph_conf }}",
+    "ceph_rest_api": "{{ ceph_rest_api }}",
+    "ceph_rest_api_subfolder": "{{ ceph_rest_api_subfolder }}",
+
+    "inkscope_last_commit": "{{ last_commit.stdout_lines[0] }}",
+
+    "mongodb_host": "{{ mongodb_host }}",
+    "mongodb_set": "{{ mongodb_set }}",
+    "mongodb_replicaSet" : "{{ mongodb_replicaSet }}",
+    "mongodb_read_preference": "{{ mongodb_read_preference }}",
+    "mongodb_port": {{ mongodb_port }},
+    "mongodb_user": "{{ mongodb_user }}",
+    "mongodb_passwd": "{{ mongodb_passwd }}",
+    "is_mongo_authenticate": {{ is_mongo_authenticate }},
+    "is_mongo_replicat": {{ is_mongo_replicat }},
+    "cluster": "{{ cluster }}",
+    "platform": "{{ platform }}",
+    "status_refresh": {{ status_refresh }},
+    "osd_dump_refresh": {{ osd_dump_refresh }},
+    "pg_dump_refresh": {{ pg_dump_refresh }},
+    "crushmap_refresh": {{ crushmap_refresh }},
+    "df_refresh": {{ df_refresh }},
+    "cluster_window": {{ cluster_window }},
+    "cluster_window": {{ cluster_window }},
+    "pool_window": {{ pool_window }},
+    "mem_refresh": {{ mem_refresh }},
+    "swap_refresh": {{ swap_refresh }},
+    "disk_refresh": {{ disk_refresh }},
+    "partition_refresh": {{ partition_refresh }},
+    "cpu_refresh": {{ cpu_refresh }},
+    "net_refresh": {{ net_refresh }},
+    "mem_window": {{ mem_window }},
+    "swap_window": {{ swap_window }},
+    "disk_window": {{ disk_window }},
+    "partition_window": {{ partition_window }},
+    "cpu_window": {{ cpu_window }},
+    "net_window": {{ net_window }},
+    "inkscope_root" : "{{ inkscope_root }}",
+    "radosgw_url": "{{ radosgw_url }}",
+    "radosgw_admin": "{{ radosgw_admin }}",
+    "radosgw_key": "{{ radosgw_key }}",
+    "radosgw_secret": "{{ radosgw_secret }}",
+
+    "influxdb_endpoint": {% if influxdb_install == 'yes' %}
+       "http://{{ ansible_host }}:8086"
+       {% else %}
+       ""
+       {% endif %}
+
+}

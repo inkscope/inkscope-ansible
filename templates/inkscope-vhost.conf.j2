@@ -1,0 +1,41 @@
+Listen {{ inkscope_http_port }}
+<VirtualHost *:{{ inkscope_http_port }}>
+    ServerName  localhost
+    ServerAdmin webmaster@localhost
+
+    DocumentRoot "{{ inkscope_http_root }}"
+    <Directory "{{ inkscope_http_root }}">
+        Options All
+        AllowOverride All
+    </Directory>
+
+    ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+    <Directory "/usr/lib/cgi-bin">
+        AllowOverride None
+        Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+        Order allow,deny
+        Allow from all
+    </Directory>
+
+    WSGIScriptAlias /inkscopeCtrl {{ inkscope_http_root }}/inkscopeCtrl/inkscopeCtrl.wsgi
+    <Directory "{{ inkscope_http_root }}/inkScopeCtrl">
+        Order allow,deny
+        Allow from all
+    </Directory>
+
+    WSGIScriptAlias /ceph_rest_api {{ inkscope_http_root }}/inkscopeCtrl/ceph-rest-api.wsgi
+    <Directory "{{ inkscope_http_root }}/inkScopeCtrl">
+           Require all granted
+    </Directory>
+
+    ProxyRequests Off  # we want  a "Reverse proxy"
+    ProxyPass /ceph-rest-api/ http://{{ ansible_hostname }}:{{ inkscope_http_port }}/ceph_rest_api/api/v0.1/
+
+    ErrorLog /var/log/apache2/error.log
+
+    # Possible values include: debug, info, notice, warn, error, crit,
+    # alert, emerg.
+    LogLevel warn
+    ErrorLog {{ inkscope_log_dir }}/webserver_error.log
+    CustomLog {{ inkscope_log_dir }}/webserver_access.log common
+</VirtualHost>

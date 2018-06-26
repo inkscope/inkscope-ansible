@@ -1,0 +1,71 @@
+#
+# variables  for the inkscope configuration
+#
+
+platform: "see variable platform in vars/my_inkscope.yaml" # replace to define the instance of Ceph
+
+inkscope_http_port: 80
+inkscope_http_root: "/var/www/inkscope"
+inkscope_log_dir: "/var/log/inkscope"
+
+inkscope_root: "{{ ansible_host }}:{{ inkscope_http_port }}"
+
+#
+# Ceph configuration
+#
+cluster: "ceph"
+ceph_conf: "/etc/ceph/ceph.conf"
+ceph_rest_api: "{{ ansible_host }}:{{ inkscope_http_port }}"
+ceph_rest_api_subfolder: "ceph_rest_api"
+
+#
+# mongodb installation
+#
+# mongodb_location:
+#  - local: will install MongoDB on the inkscope server
+#  - custom: will use a custom installation
+mongodb_location: local
+mongodb_host: "{{ ansible_host }}"
+mongodb_port: 27017
+mongodb_read_preference: "ReadPreference.SECONDARY_PREFERRED"
+
+is_mongo_authenticate: 0
+mongodb_user: "ceph"
+mongodb_passwd: "my_password"
+
+is_mongo_replicat: 0
+mongodb_set: "mongodb0:27017,mongodb1:27017,mongodb2:27017"
+mongodb_replicaSet: "replmongo0"
+
+# influxdb installation: not supported yet
+influxdb_install: no
+influxdb_endpoint: "http://{{ ansible_host }}:8086"
+
+# probes configuration
+# values represents the delay in seconds between two refreshes
+status_refresh: 3
+osd_dump_refresh: 3
+pg_dump_refresh: 60
+crushmap_refresh: 60
+df_refresh: 60
+cluster_window: 1200
+osd_window: 1200
+pool_window: 1200
+mem_refresh: 60
+swap_refresh: 600
+disk_refresh: 60
+partition_refresh: 60
+cpu_refresh: 30
+net_refresh: 30
+mem_window: 1200
+swap_window: 3600
+disk_window: 1200
+partition_window: 1200
+cpu_window: 1200
+net_window: 1200
+
+# Rados gateway configuration
+radosgw_url:    ""      # rados gateway endpoint
+radosgw_admin:  "admin" # pseudo-bucket for the rados gateway admin API
+radosgw_key:    ""      # access key of a S3 user with admin capabilities
+radosgw_secret: ""      # secret key of this S3 user
