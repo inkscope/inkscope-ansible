@@ -40,7 +40,7 @@ An example inventory file would look like:
 ### inkscope-ansible configuration
 
 The configuration for your inkscope installation will be set by the use of ansible variables.
-All of these options and their default values are defined in the vars/my_inkscope.yaml file at the root of the inkscope-ansible project.
+All of these options and their default values are defined in the **vars/my_inkscope.yaml** file at the root of the inkscope-ansible project.
 
 ### Playbook
 
