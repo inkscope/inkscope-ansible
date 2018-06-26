@@ -9,62 +9,51 @@
         name: python
         state: latest
 
-    - block:
-      - name: 2 - Installing apache2 (Debian)
-        apt:
-          name: apache2
-          state: latest
-      - name: Starting apache2
-        service:
-          name: apache2
-          state: started
-      when: ansible_os_family == 'Debian'
-    - block:
-      - name: 2 - Installing httpd (RedHat)
-        yum:
-          name: httpd
-          state: latest
-      - name: Starting httpd
-        service:
-          name: httpd
-          state: started
+    - name: 2 (RedHat) - Installing httpd
+      yum:
+        name: httpd
+        state: latest
       when: ansible_os_family == 'RedHat'
+
+    - name: 2 (Debian) - Installing apache2
+      apt:
+        name: apache2
+        state: latest
+      when: ansible_os_family == 'Debian'
 
     - name: 3 - Installing Apache module proxy_http
       apache2_module:
         name: proxy_http
         state: present
 
-    - name: 4 - Installing Apache module for wsgi (Debian)
-      package:
-        name: libapache2-mod-wsgi
-        state: latest
-      when: ansible_os_family == 'Debian'
-    - name: 4 - Installing Apache module for wsgi (RedHat)
+    - name: 4 (RedHat) - Installing Apache module for wsgi
       package:
         name: mod_wsgi
         state: latest
       when: ansible_os_family == 'RedHat'
 
+    - name: 4 (Debian) - Installing Apache module for wsgi
+      package:
+        name: libapache2-mod-wsgi
+        state: latest
+      when: ansible_os_family == 'Debian'
+
     - name: 5 - Installing MongoDB
       package:
         name: mongodb
         state: latest
+      when: mongodb_location == 'local'
 
-
-    - name: 6 - Fetching Inkscope files from Github
+    - name: 6a - Fetching Inkscope files from Github
       git:
         repo: https://github.com/inkscope/inkscope
         dest: "{{ working_dir }}"
 
-    - name: 6a - Getting last commit date
+    - name: 6b - Getting Inkscope last commit date
       shell: git log -1 --format=%cD
       args:
         chdir: "{{ working_dir }}"
-      register: last_commit
-
-    - debug:
-        msg: "Last commit: {{ last_commit.stdout_lines }}"
+      register: last_commit_result
 
     - name: 7 - Installing python-pip
       package:
@@ -78,12 +67,24 @@
 
     - name: 9a - Copying inkscope files to /var/www/inkscope
       command: "cp -R {{ working_dir }}/inkscopeViz/ /var/www/inkscope"
+
     - name: 9b - Copying inkscope files to /var/www/inkscope
       command: "cp -R {{ working_dir }}/inkscopeCtrl/ /var/www/inkscope"
+
     - name: 9c - Copying inkscope files to /var/www/inkscope
       command: "cp -R {{ working_dir }}/index.html /var/www/inkscope/index.html"
 
-    - name: 10a - Configuring Apache (Debian)
+    - name: 10a (RedHat) - Configuring Apache
+      template:
+        src: ./templates/inkscope-vhost.conf.j2
+        dest: /etc/httpd/conf.d/inkscope.conf
+        owner: root
+        group: root
+        mode: 0644
+        backup: yes
+      when: ansible_os_family == 'RedHat'
+
+    - name: 10a (Debian) - Configuring Apache
       template:
         src: ./templates/inkscope-vhost.conf.j2
         dest: /etc/apache2/sites-available/inkscope.conf
@@ -93,23 +94,14 @@
         backup: yes
       when: ansible_os_family == 'Debian'
 
-    - name: 10b - Enabling inkscope (Debian)
+    - name: 10b (Debian) - Enabling inkscope
       shell: a2ensite inkscope
       when: ansible_os_family == 'Debian'
 
-    - name: 10c - Disabling default (Debian)
+    - name: 10c (Debian) - Disabling default
       shell: a2dissite 000-default
       when: ansible_os_family == 'Debian'
 
-    - name: 10d - Configuring Apache (RedHat)
-      template:
-        src: ./templates/inkscope-vhost.conf.j2
-        dest: /etc/httpd/conf.d/inkscope.conf
-        owner: root
-        group: root
-        mode: 0644
-        backup: yes
-      when: ansible_os_family == 'RedHat'
 
     - name: 11a - Creating inkscope.conf
       template:
@@ -148,17 +140,18 @@
         group: root
         mode: 0755
 
-    - name: 12b - Copying binaries to /opt/inkscope/bin
+    - name: 12b - Copying cephprobe.py to /opt/inkscope/bin
       command: "cp -Rp {{ working_dir }}/inkscopeProbe/cephprobe.py /opt/inkscope/bin"
-    - name: 12c - Copying binaries to /opt/inkscope/bin
-      command: "cp -Rp {{ working_dir }}/inkscopeProbe/daemon.py /opt/inkscope/bin"
 
+    - name: 12c - Copying daemon.py to /opt/inkscope/bin
+      command: "cp -Rp {{ working_dir }}/inkscopeProbe/daemon.py /opt/inkscope/bin"
 
     - name: 12d - Creating Cephprobe service (link for cephprobe.py)
       file:
         path: /etc/init.d/cephprobe
         src: /opt/inkscope/bin/cephprobe.py
         state: link
+
     - name: 12e - Creating Cephprobe service (link for daemon.py)
       file:
         path: /etc/init.d/daemon.py
@@ -194,13 +187,15 @@
         block: "{{ lookup('template', 'templates/ceph.conf.j2') }}"
         state: present
 
-    - name: 14 - Restarting Apache (Debian)
-      service:
-        name: apache2
-        state: restarted
-      when: ansible_os_family == 'Debian'
-    - name: 14 - Restarting Apache (RedHat)
+    - name: 14 (RedHat) - Restarting Apache
       service:
         name: httpd
         state: restarted
       when: ansible_os_family == 'RedHat'
+
+    - name: 14 (Debian) - Restarting Apache
+      service:
+        name: apache2
+        state: restarted
+      when: ansible_os_family == 'Debian'
+
