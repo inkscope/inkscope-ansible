@@ -68,9 +68,14 @@
         chdir: "{{ working_dir }}"
       register: last_commit_result
 
-    - name: 7 - Installing python-pip
+    - name: 7a - Installing python-pip
       package:
         name: python-pip
+        state: latest
+
+    - name: 7b - Installing gcc
+      package:
+        name: gcc
         state: latest
 
     - name: 8 - Installing python modules
