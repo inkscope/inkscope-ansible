@@ -52,12 +52,17 @@
         state: latest
       when: mongodb_location == 'local'
 
-    - name: 6a - Fetching Inkscope files from Github
+    - name: 6a - Installing git
+      package:
+        name: git
+        state: latest
+
+    - name: 6b - Fetching Inkscope files from Github
       git:
         repo: https://github.com/inkscope/inkscope
         dest: "{{ working_dir }}"
 
-    - name: 6b - Getting Inkscope last commit date
+    - name: 6c - Getting Inkscope last commit date
       shell: git log -1 --format=%cD
       args:
         chdir: "{{ working_dir }}"
