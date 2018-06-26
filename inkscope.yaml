@@ -4,9 +4,14 @@
     - include_vars:
         dir: test_vars
 
-    - name: 1 - Installing Python
+    - name: 1a - Installing python
       package:
         name: python
+        state: latest
+
+    - name: 1b - Installing python-dev
+      package:
+        name: python-dev
         state: latest
 
     - name: 2 - Creating inkscope directory for logs
