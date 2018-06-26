@@ -15,5 +15,5 @@ It will install Inkscope and all its dependencies directly from the Github repos
 
 - Ceph must be installed on the targeted server, with the convenient ceph configuration file and admin keyring .
 
-- vars/inkscope.yaml must filled with your own parameters
+- vars/my_inkscope.yaml must filled with your own parameters
 
