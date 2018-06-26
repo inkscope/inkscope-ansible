@@ -8,7 +8,7 @@ Work in progress:
 
 ## Purpose
 
-This playbook intends to replace the  installation of Inkscopefrom packages (deb, rpm). Inkscope packages are no more maintained.
+This playbook intends to replace the  installation of Inkscope from packages (deb, rpm). Inkscope packages are no more maintained.
 
 This will install Inkscope and all its dependencies directly from the Github repository.
 
