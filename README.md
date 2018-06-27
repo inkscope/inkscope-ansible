@@ -2,7 +2,7 @@
 
 
 Work in progress:
-- tested on ubuntu 16.04
+- tested on ubuntu 16.04: use inkscope_ubuntu.yaml
 - testing on centos
 
 
