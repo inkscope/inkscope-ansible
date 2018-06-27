@@ -1,0 +1,9 @@
+#
+# variables used by geerlingguy.apache role: don't change
+#
+apache_create_vhosts: true
+apache_vhosts_filename: "inkscope.conf"
+apache_vhosts_template: "templates/inkscope-vhost.conf.j2"
+apache_remove_default_vhost: true
+
+apache_state: started

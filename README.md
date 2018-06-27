@@ -2,8 +2,8 @@
 
 
 Work in progress:
-- tested on ubuntu 16.04: use inkscope_ubuntu.yaml
-- testing on centos
+- tested on ubuntu 16.04: use **inkscope_ubuntu.yaml**
+- don't use inkscope_universal.yaml still under construction
 
 
 ## Purpose
@@ -23,6 +23,10 @@ Ceph must be installed on the targeted server, with the convenient ceph configur
 You can install directly from the source on github by cloning the repository :
 
     git clone https://github.com/inkscope/inkscope-ansible.git
+
+Install ansible used roles by the command:
+
+    ansible-galaxy install -r requirements.yaml
 
 
 ## Configuration and usage
@@ -44,8 +48,8 @@ All of these options and their default values are defined in the **vars/my_inksc
 
 ### Playbook
 
-Installation with the playbook could be run by the command:
+Inkscope on Ubuntu installation with the playbook could be run by the command:
 
-    ansible-playbook inkscope.yaml
+    ansible-playbook inkscope_ubuntu.yaml
 
 
