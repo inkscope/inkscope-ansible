@@ -1,0 +1,2 @@
+apache_packages:
+  - libapache2-mod-wsgi
