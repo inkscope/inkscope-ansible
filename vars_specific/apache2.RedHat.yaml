@@ -1,2 +1,2 @@
 apache_packages:
-  - mod-wsgi
+  - mod_wsgi

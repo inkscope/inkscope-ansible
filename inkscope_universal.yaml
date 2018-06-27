@@ -49,17 +49,27 @@
         chdir: "{{ working_dir }}"
       register: last_commit_result
 
-    - name: 6 - Installing MongoDB
+    - name: 6a (RedHat) - Installing MongoDB-server :-)
+      package:
+        name: mongodb-server
+        state: latest
+      when: mongodb_location == 'local' and ansible_os_family == 'RedHat'
+    
+    - name: 6b (RedHat) - Starting MongoDB-server :-)
+      service:
+        name: mongod
+        state: started
+      when: ansible_os_family == 'RedHat' 
+
+    - name: 6c - Installing MongoDB-client
       package:
         name: mongodb
         state: latest
       when: mongodb_location == 'local'
 
-
     - name: 7 - Installing python-pip
       include_role:
         name: geerlingguy.pip
-
 
     - name: 8 - Installing python modules
       pip:
