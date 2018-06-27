@@ -2,7 +2,7 @@
   become: yes
   tasks:
     - include_vars:
-        dir: test_vars
+        dir: vars
 
     - name: 1a - Installing python
       package:
