@@ -1,7 +1,7 @@
 # inkscope-ansible
 
 
-Work in progress:
+Work completed:
 - tested on centos7 and ubuntu 16.04: **inkscope.yaml**
 
 
