@@ -3,7 +3,7 @@
 
 Work in progress:
 - tested on ubuntu 16.04: use **inkscope_ubuntu.yaml**
-- don't use inkscope_universal.yaml still under construction
+- tested on centos7: **inkscope_universal.yaml**
 
 
 ## Purpose
