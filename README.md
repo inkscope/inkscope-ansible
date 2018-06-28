@@ -2,8 +2,7 @@
 
 
 Work in progress:
-- tested on ubuntu 16.04: use **inkscope_ubuntu.yaml**
-- tested on centos7: **inkscope_universal.yaml**
+- tested on centos7 and ubuntu 16.04: **inkscope.yaml**
 
 
 ## Purpose
@@ -15,8 +14,11 @@ This will install Inkscope and all its dependencies directly from the Github rep
 
 ## Pre-requisites
 
-Ceph must be installed on the targeted server, with the convenient ceph configuration file and admin keyring .
-
+Ceph must be installed on the targeted server, with the convenient ceph configuration file and admin keyring 
+**Take care of:**
+**-   system date and time**
+**-   firewall**
+**-   selinux**
 
 ## Installation from github
 
@@ -45,6 +47,7 @@ An example inventory file would look like:
 
 The configuration for your inkscope installation will be set by the use of ansible variables.
 All of these options and their default values are defined in the **vars/my_inkscope.yaml** file at the root of the inkscope-ansible project.
+**Apache is installed by the playbook; it works fine when using 8080 as port for inkscope vhost**
 
 ### Playbook
 
