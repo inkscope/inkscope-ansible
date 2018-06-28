@@ -1,0 +1,5 @@
+systemd_service_name: "cephprobe"
+systemd_service_Unit_Description: cephprobe service
+systemd_service_Unit_Requires: network.service
+systemd_service_Unit_After: network.service
+systemd_service_Service_ExecStart: /etc/init.d/cephprobe start

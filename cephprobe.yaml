@@ -1,0 +1,23 @@
+- hosts: inkscope
+  become: yes
+  tasks:
+    - include_vars:
+        dir: test_vars
+
+    - include_vars:
+        file: "vars_specific/apache2.{{ ansible_os_family }}.yaml"
+
+
+    - name: Make cephprobe service
+      include_role:
+        name: tumf.systemd-service
+
+    - name: enable cephprobe service
+      service:
+        name: cephprobe
+        enabled: yes
+    - name: Starting cephprobe
+      service:
+        name: cephprobe
+        state: restarted
+
