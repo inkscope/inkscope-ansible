@@ -15,10 +15,15 @@ This will install Inkscope and all its dependencies directly from the Github rep
 ## Pre-requisites
 
 Ceph must be installed on the targeted server, with the convenient ceph configuration file and admin keyring.
-**Take care of:**.
-**-   system date and time**.
-**-   firewall**.
-**-   selinux**.
+
+**Take care of:**
+
+**-   system date and time**
+
+**-   firewall**
+
+**-   selinux**
+
 
 ## Installation from github
 
