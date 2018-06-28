@@ -49,32 +49,60 @@
         chdir: "{{ working_dir }}"
       register: last_commit_result
 
-    - name: 6a (RedHat) - Installing MongoDB-server :-)
-      package:
-        name: mongodb-server
-        state: latest
+    - block:
+      - name: 4a (RedHat) - Installing MongoDB-server
+        package:
+          name: mongodb-server
+          state: latest
+      - name: 4b (RedHat) - Enabling MongoDB-server
+        service:
+          name: mongod
+          enabled: yes
+      - name: 4c (RedHat) - Starting MongoDB-server
+        service:
+          name: mongod
+          state: started
+      - name: 4d (RedHat) - Installing MongoDB-client
+        package:
+          name: mongodb
+          state: latest
       when: mongodb_location == 'local' and ansible_os_family == 'RedHat'
-    
-    - name: 6b (RedHat) - Starting MongoDB-server :-)
-      service:
-        name: mongod
-        state: started
-      when: ansible_os_family == 'RedHat' 
 
-    - name: 6c - Installing MongoDB-client
+    - name: 4 (Debian)  - Installing, enabling and starting MongoDB
       package:
         name: mongodb
         state: latest
-      when: mongodb_location == 'local'
+      when: mongodb_location == 'local' and ansible_os_family == 'Debian'
 
-    - name: 7 - Installing python-pip
+    - name: 5 - Installing gcc
+      package:
+        name: gcc
+        state: latest
+
+    - name: 6 - Installing python-pip
       include_role:
         name: geerlingguy.pip
 
-    - name: 8 - Installing python modules
+    - name: 7 - Installing python modules
       pip:
         requirements: "{{ working_dir }}/requirements.txt"
         state: present
+
+    - name: 8a - Creating /var/www
+      file:
+        path: "/var/www"
+        state: directory
+        owner: root
+        group: root
+        mode: 0755
+
+    - name: 8b - Creating /var/www/inkscope
+      file:
+        path: "/var/www/inkscope"
+        state: directory
+        owner: root
+        group: root
+        mode: 0755
 
     - name: 9a - Copying inkscope files to /var/www/inkscope
       command: "cp -R {{ working_dir }}/inkscopeViz/ /var/www/inkscope"
@@ -86,7 +114,7 @@
       command: "cp -R {{ working_dir }}/index.html /var/www/inkscope/index.html"
 
 
-    - name: 11a - Creating inkscope.conf
+    - name: 10 - Creating inkscope.conf
       template:
         src: ./templates/inkscope.conf.j2
         dest: "{{ working_dir }}/inkscope.conf"
@@ -96,12 +124,12 @@
         backup: yes
 
 
-    - name: 4 - Installing apache2 and dependencies
+    - name: 11 - Installing apache2 and dependencies
       include_role:
         name: geerlingguy.apache
 
 
-    - name: 11b - Creating /opt/inkscope
+    - name: 12a - Creating /opt/inkscope
       file:
         path: "/opt/inkscope"
         state: directory
@@ -109,7 +137,7 @@
         group: root
         mode: 0755
 
-    - name: 11c - Creating /opt/inkscope/etc
+    - name: 12b - Creating /opt/inkscope/etc
       file:
         path: "/opt/inkscope/etc"
         state: directory
@@ -117,11 +145,11 @@
         group: root
         mode: 0755
 
-    - name: 11d - Copying inkscope.conf to /opt/inkscope/etc
+    - name: 12c - Copying inkscope.conf to /opt/inkscope/etc
       command: "cp -R {{ working_dir }}/inkscope.conf /opt/inkscope/etc"
 
 
-    - name: 12a - Creating /opt/inkscope/bin
+    - name: 12d - Creating /opt/inkscope/bin
       file:
         path: "/opt/inkscope/bin"
         state: directory
@@ -129,32 +157,6 @@
         group: root
         mode: 0755
 
-    - name: 12b - Copying cephprobe.py to /opt/inkscope/bin
-      command: "cp -Rp {{ working_dir }}/inkscopeProbe/cephprobe.py /opt/inkscope/bin"
-
-    - name: 12c - Copying daemon.py to /opt/inkscope/bin
-      command: "cp -Rp {{ working_dir }}/inkscopeProbe/daemon.py /opt/inkscope/bin"
-
-    - name: 12d - Creating Cephprobe service (link for cephprobe.py)
-      file:
-        path: /etc/init.d/cephprobe
-        src: /opt/inkscope/bin/cephprobe.py
-        state: link
-
-    - name: 12e - Creating Cephprobe service (link for daemon.py)
-      file:
-        path: /etc/init.d/daemon.py
-        src: /opt/inkscope/bin/daemon.py
-        state: link
-
-    - name: 12f - Enabling Cephprobe service
-      service:
-        name: cephprobe
-        enabled: yes
-    - name: 12g - Starting Cephprobe service
-      shell: service cephprobe restart
-      args:
-        warn: no
 
     - name: 13a - Verifying Ceph presence
       shell: ceph --version
@@ -186,3 +188,30 @@
         state: restarted
       when: ansible_os_family == 'Debian'
 
+    - name: 15a - Copying cephprobe.py to /opt/inkscope/bin
+      command: "cp -Rp {{ working_dir }}/inkscopeProbe/cephprobe.py /opt/inkscope/bin"
+
+    - name: 15b - Copying daemon.py to /opt/inkscope/bin
+      command: "cp -Rp {{ working_dir }}/inkscopeProbe/daemon.py /opt/inkscope/bin"
+
+    - name: 15c - Creating Cephprobe service (link for cephprobe.py)
+      file:
+        path: /etc/init.d/cephprobe
+        src: /opt/inkscope/bin/cephprobe.py
+        state: link
+
+    - name: 15d - Creating Cephprobe service (link for daemon.py)
+      file:
+        path: /etc/init.d/daemon.py
+        src: /opt/inkscope/bin/daemon.py
+        state: link
+
+    - name: 15e - Enabling Cephprobe service
+      service:
+        name: cephprobe
+        enabled: yes
+
+    - name: 15f - Starting Cephprobe service
+      shell: service cephprobe restart
+      args:
+        warn: no

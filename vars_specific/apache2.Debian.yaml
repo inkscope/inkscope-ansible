@@ -1,2 +1,4 @@
 apache_packages:
   - libapache2-mod-wsgi
+
+apache_service_name: apache2
