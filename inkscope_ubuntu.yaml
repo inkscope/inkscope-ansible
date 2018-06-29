@@ -1,0 +1,230 @@
+- hosts: inkscope
+  become: yes
+  tasks:
+    - include_vars:
+        dir: vars
+
+    - name: 1a - Installing python
+      package:
+        name: python
+        state: latest
+
+    - name: 1b (RedHat) - Installing python-devel
+      package:
+        name: python-devel
+        state: latest
+      when: ansible_os_family == 'RedHat'
+
+    - name: 1b (Debian) - Installing python-dev
+      package:
+        name: python-dev
+        state: latest
+      when: ansible_os_family == 'Debian'
+
+
+    - name: 2 - Creating inkscope directory for logs
+      file:
+        path: "{{ inkscope_log_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: 0777
+
+    - name: 3 (RedHat) - Installing httpd
+      yum:
+        name: httpd
+        state: latest
+      when: ansible_os_family == 'RedHat'
+
+    - name: 3 (Debian) - Installing apache2
+      apt:
+        name: apache2
+        state: latest
+      when: ansible_os_family == 'Debian'
+
+    - name: 4a - Installing Apache module proxy_http
+      apache2_module:
+        name: proxy_http
+        state: present
+
+    - name: 4b (RedHat) - Installing Apache module for wsgi
+      package:
+        name: mod_wsgi
+        state: latest
+      when: ansible_os_family == 'RedHat'
+
+    - name: 4b (Debian) - Installing Apache module for wsgi
+      package:
+        name: libapache2-mod-wsgi
+        state: latest
+      when: ansible_os_family == 'Debian'
+
+    - name: 5 - Installing MongoDB
+      package:
+        name: mongodb
+        state: latest
+      when: mongodb_location == 'local'
+
+    - name: 6a - Installing git
+      package:
+        name: git
+        state: latest
+
+    - name: 6b - Fetching Inkscope files from Github
+      git:
+        repo: https://github.com/inkscope/inkscope
+        dest: "{{ working_dir }}"
+
+    - name: 6c - Getting Inkscope last commit date
+      shell: git log -1 --format=%cD
+      args:
+        chdir: "{{ working_dir }}"
+      register: last_commit_result
+
+    - name: 7a - Installing python-pip
+      package:
+        name: python-pip
+        state: latest
+
+    - name: 7b - Installing gcc
+      package:
+        name: gcc
+        state: latest
+
+    - name: 8 - Installing python modules
+      pip:
+        requirements: "{{ working_dir }}/requirements.txt"
+        state: present
+
+    - name: 9a - Copying inkscope files to /var/www/inkscope
+      command: "cp -R {{ working_dir }}/inkscopeViz/ /var/www/inkscope"
+
+    - name: 9b - Copying inkscope files to /var/www/inkscope
+      command: "cp -R {{ working_dir }}/inkscopeCtrl/ /var/www/inkscope"
+
+    - name: 9c - Copying inkscope files to /var/www/inkscope
+      command: "cp -R {{ working_dir }}/index.html /var/www/inkscope/index.html"
+
+    - name: 10a (RedHat) - Configuring Apache
+      template:
+        src: ./templates/inkscope-vhost.conf.j2
+        dest: /etc/httpd/conf.d/inkscope.conf
+        owner: root
+        group: root
+        mode: 0644
+        backup: yes
+      when: ansible_os_family == 'RedHat'
+
+    - name: 10a (Debian) - Configuring Apache
+      template:
+        src: ./templates/inkscope-vhost.conf.j2
+        dest: /etc/apache2/sites-available/inkscope.conf
+        owner: root
+        group: root
+        mode: 0644
+        backup: yes
+      when: ansible_os_family == 'Debian'
+
+    - name: 10b (Debian) - Enabling inkscope
+      shell: a2ensite inkscope
+      when: ansible_os_family == 'Debian'
+
+    - name: 10c (Debian) - Disabling default
+      shell: a2dissite 000-default
+      when: ansible_os_family == 'Debian'
+
+
+    - name: 11a - Creating inkscope.conf
+      template:
+        src: ./templates/inkscope.conf.j2
+        dest: "{{ working_dir }}/inkscope.conf"
+        owner: root
+        group: root
+        mode: 0644
+        backup: yes
+
+    - name: 11b - Creating /opt/inkscope
+      file:
+        path: "/opt/inkscope"
+        state: directory
+        owner: root
+        group: root
+        mode: 0755
+
+    - name: 11c - Creating /opt/inkscope/etc
+      file:
+        path: "/opt/inkscope/etc"
+        state: directory
+        owner: root
+        group: root
+        mode: 0755
+
+    - name: 11d - Copying inkscope.conf to /opt/inkscope/etc
+      command: "cp -R {{ working_dir }}/inkscope.conf /opt/inkscope/etc"
+
+
+    - name: 12a - Creating /opt/inkscope/bin
+      file:
+        path: "/opt/inkscope/bin"
+        state: directory
+        owner: root
+        group: root
+        mode: 0755
+
+    - name: 12b - Copying cephprobe.py to /opt/inkscope/bin
+      command: "cp -Rp {{ working_dir }}/inkscopeProbe/cephprobe.py /opt/inkscope/bin"
+
+    - name: 12c - Copying daemon.py to /opt/inkscope/bin
+      command: "cp -Rp {{ working_dir }}/inkscopeProbe/daemon.py /opt/inkscope/bin"
+
+    - name: 12d - Creating Cephprobe service (link for cephprobe.py)
+      file:
+        path: /etc/init.d/cephprobe
+        src: /opt/inkscope/bin/cephprobe.py
+        state: link
+
+    - name: 12e - Creating Cephprobe service (link for daemon.py)
+      file:
+        path: /etc/init.d/daemon.py
+        src: /opt/inkscope/bin/daemon.py
+        state: link
+
+    - name: 12f - Enabling Cephprobe service
+      service:
+        name: cephprobe
+        enabled: yes
+    - name: 12g - Starting Cephprobe service
+      shell: service cephprobe restart
+      args:
+        warn: no
+
+    - name: 13a - Verifying Ceph presence
+      shell: ceph --version
+
+    - name: 13b - Verifying Ceph configuration file presence
+      stat:
+        path: "{{ ceph_conf }}"
+      register: result
+      failed_when: "result.stat.exists == False"
+
+    - name: 13c - Creating keyring for RestApi
+      shell: "ceph auth get-or-create client.restapi mds 'allow' osd 'allow *' mon 'allow *' > /etc/ceph/{{ cluster }}.client.restapi.keyring"
+
+    - name: 13d - Modifying Ceph configuration file
+      blockinfile:
+        dest: "{{ ceph_conf }}"
+        block: "{{ lookup('template', 'templates/ceph.conf.j2') }}"
+        state: present
+
+    - name: 14 (RedHat) - Restarting Apache
+      service:
+        name: httpd
+        state: restarted
+      when: ansible_os_family == 'RedHat'
+
+    - name: 14 (Debian) - Restarting Apache
+      service:
+        name: apache2
+        state: restarted
+      when: ansible_os_family == 'Debian'
+

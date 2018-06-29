@@ -1,9 +1,10 @@
 # inkscope-ansible
 
 
-Work completed:
-- tested on centos7 and ubuntu 16.04: **inkscope.yaml**
-
+Work in progress:
+- test ok on ubuntu 16.04 with **inkscope_ubuntu.yaml**
+- test ok on centos7 with **inkscope_universal.yaml**
+- testing on ubuntu 16.04 with **inkscope_universal.yaml**
 
 ## Purpose
 
@@ -17,11 +18,8 @@ This will install Inkscope and all its dependencies directly from the Github rep
 Ceph must be installed on the targeted server, with the convenient ceph configuration file and admin keyring.
 
 **Take care of:**
-
 **-   system date and time**
-
 **-   firewall**
-
 **-   selinux**
 
 
@@ -61,3 +59,6 @@ Inkscope on Ubuntu installation with the playbook could be run by the command:
     ansible-playbook inkscope_ubuntu.yaml
 
 
+and on centos by:
+
+    ansible-playbook inkscope_universal.yaml
