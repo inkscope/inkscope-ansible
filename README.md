@@ -1,10 +1,6 @@
 # inkscope-ansible
 
-
-Work in progress:
-- test ok on ubuntu 16.04 with **inkscope_ubuntu.yaml**
-- test ok on centos7 with **inkscope_universal.yaml**
-- testing on ubuntu 16.04 with **inkscope_universal.yaml**
+tested ok on ubuntu 16.04 and centos7
 
 ## Purpose
 
@@ -54,11 +50,6 @@ All of these options and their default values are defined in the **vars/my_inksc
 
 ### Playbook
 
-Inkscope on Ubuntu installation with the playbook could be run by the command:
+Inkscope installation with the playbook could be run by the command:
 
-    ansible-playbook inkscope_ubuntu.yaml
-
-
-and on centos by:
-
-    ansible-playbook inkscope_universal.yaml
+    ansible-playbook inkscope.yaml
