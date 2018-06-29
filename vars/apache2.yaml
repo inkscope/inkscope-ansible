@@ -6,11 +6,4 @@ apache_vhosts_filename: "inkscope.conf"
 apache_vhosts_template: "templates/inkscope-vhost.conf.j2"
 apache_remove_default_vhost: true
 
-apache_mods_enabled:
-  - proxy.load
-  - proxy_http.load
-
-apache_packages:
-  - libapache2-mod-wsgi
-
 apache_state: started

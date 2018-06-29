@@ -1,5 +1,8 @@
 apache_packages:
   - mod_wsgi
 
+apache_mods_enabled:
+  - proxy.load
+  - proxy_http.load
 
 apache_service_name: httpd
