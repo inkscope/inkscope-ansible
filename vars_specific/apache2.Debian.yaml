@@ -1,4 +1,11 @@
 apache_packages:
+  - apache2
+  - apache2-utils
   - libapache2-mod-wsgi
+
+apache_mods_enabled:
+  - wsgi.load
+  - proxy.load
+  - proxy_http.load
 
 apache_service_name: apache2
