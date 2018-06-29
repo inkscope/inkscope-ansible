@@ -15,7 +15,7 @@ Ceph must be installed on the targeted server, with the convenient ceph configur
 
 **Take also care of:**
 
-**-   system date and time : install ntp if necessary**
+**-   system date and time : install ntp if necessary **
 
 **-   firewall : manage rules or disable it **
 
