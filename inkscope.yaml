@@ -50,6 +50,10 @@
       register: last_commit_result
 
     - block:
+      - name: 4xx (RedHat) - Installing Epel-Release
+        yum:
+          name: epel-release
+          state: latest
       - name: 4a (RedHat) - Installing MongoDB-server
         package:
           name: mongodb-server
